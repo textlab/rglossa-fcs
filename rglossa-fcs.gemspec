@@ -7,11 +7,11 @@ require "rglossa/fcs/version"
 Gem::Specification.new do |s|
   s.name        = "rglossa-fcs"
   s.version     = Rglossa::Fcs::VERSION
-  s.authors     = ["TODO: Your name"]
-  s.email       = ["TODO: Your email"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of Rglossa::Fcs."
-  s.description = "TODO: Description of Rglossa::Fcs."
+  s.authors     = ["Anders Nøklestad"]
+  s.email       = ["anders.noklestad@iln.uio.no"]
+  s.homepage    = 'http://www.hf.uio.no/iln/english/about/organization/text-laboratory/'
+  s.summary     = "Federated content search for Glossa"
+  s.description = "CLARIN federated content search for rglossa, the Ruby on Rails version of the Glossa system for corpus search and results management"
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
