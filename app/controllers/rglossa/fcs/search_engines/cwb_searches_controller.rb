@@ -2,6 +2,7 @@ module Rglossa
   module Fcs
     module SearchEngines
       class CwbSearchesController < Rglossa::SearchEngines::CwbSearchesController
+        layout false
 
         # Dispatches to the correct method of the RESTful controller we're
         # inheriting from
@@ -12,39 +13,48 @@ module Rglossa
           end
         end
 
+
+        def create
+          @search = create_search(create_queries)
+
+          results = @search.get_result_page(1)
+          if params[:maximumRecords].present?
+            limit = params[:maximumRecords].to_i - 1
+            results = results[0..limit]
+          end
+
+          @result_data = extract_data_from(results)
+          @url =  "#{request.base_url}#{request.path}"
+
+          render 'create'
+        end
+
+
         #########
         private
         #########
 
-        def create
+
+        def create_queries
           query = params[:query]
 
           # Just make it work with a single query word for now
           unless query =~ /^".+"$/
             query = %Q{"#{query}"}
           end
-          search_params = {
-            queries: [{
-              'query' => query,
-              'corpusShortName' => params[:corpusShortName]
-            }],
-          }
-          @search = create_search(search_params)
 
-          builder = Builder::XmlMarkup.new
-          xml = builder.fsc(:DataView, type: 'application/x-clarin-fcs-kwic+xml') do |v|
-            v.kwic(:kwic, 'xmlns:kwic' => 'http://clarin.eu/fcs/1.0/kwic') do |k|
-              @search.get_result_page(1).each do |hit|
-                s_unit = hit.sub(/^\s*\d+:\s*<s_id.+>:\s*/, '')  # remove position and s ID
-                left, keyword, right = s_unit.match(/(.+)<(.+)>(.+)/)[1..-1].map { |s| s.strip }
-                k.kwic(:c, type: 'left') { |l| l << left }
-                k.kwic(:kw) { |k| k << keyword }
-                k.kwic(:c, type: 'right') { |l| l << right }
-              end
-            end
-          end
-          render xml: xml
+          { queries: [{ 'query' => query, 'corpusShortName' => params[:corpusShortName] }] }
         end
+
+
+        def extract_data_from(results)
+          results.map do |result|
+            s_id, left, keyword, right =
+              result.match(/<s_id\s+(.+?)>:\s+(.+)<(.+)>(.+)/)[1..-1].map { |s| s.strip }
+            {s_id: s_id, left: left, keyword: keyword, right: right}
+          end
+        end
+
       end
     end
   end
