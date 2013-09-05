@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sru:searchRetrieveResponse xmlns:sru="http://www.loc.gov/zing/srw/" xmlns:fcs="http://clarin.eu/fcs/1.0" xmlns:kwic="http://clarin.eu/fcs/1.0/kwic">
+  <sru:version>1.2</sru:version>
+  <sru:numberOfRecords><%= @search.num_hits %></sru:numberOfRecords>
+  <sru:records>
+    <% @result_data.each do |result| %>
+    <sru:record>
+      <sru:recordSchema>http://clarin.eu/fcs/1.0</sru:recordSchema>
+      <sru:recordPacking>xml</sru:recordPacking>
+      <sru:recordData>
+        <fcs:Resource pid="<%= "#{@url}##{result[:s_id]}" %>">
+          <fcs:DataView type="application/x-clarin-fcs-kwic+xml">
+            <kwic:kwic>
+              <kwic:c type="left"><%= result[:left] %></kwic:c>
+              <kwic:kw><%= result[:keyword] %></kwic:kw>
+              <kwic:c type="right"><%= result[:right] %></kwic:c>
+            </kwic:kwic>
+          </fcs:DataView>
+        </fcs:Resource>
+      </sru:recordData>
+    </sru:record>
+    <% end %>
+  </sru:records>
+</sru:searchRetrieveResponse>
