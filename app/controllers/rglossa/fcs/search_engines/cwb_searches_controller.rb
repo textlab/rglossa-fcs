@@ -17,7 +17,8 @@ module Rglossa
         def create
           @search = create_search(create_queries)
 
-          results = @search.get_result_page(1)
+          # The nil parameter means we don't want any attributes beside the word form
+          results = @search.get_result_page(1, nil)
           if params[:maximumRecords].present?
             limit = params[:maximumRecords].to_i - 1
             results = results[0..limit]
