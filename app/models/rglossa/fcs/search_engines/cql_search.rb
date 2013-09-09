@@ -1,3 +1,6 @@
+require 'rest_client'
+require 'nokogiri'
+
 module Rglossa
   module Fcs
     module SearchEngines
