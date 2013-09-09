@@ -5,7 +5,7 @@ module Rglossa
 
         # Used by the base controller to find the right kind of model to work with
         def model_class
-          RemoteSearch
+          CqlSearch
         end
 
       end
