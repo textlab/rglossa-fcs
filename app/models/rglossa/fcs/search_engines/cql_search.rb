@@ -18,7 +18,7 @@ module Rglossa
           url = corpus.config[:url]
           start_record = (page_no - 1) * page_size + 1
           maximum_records = page_size
-          query = queries.first['query']
+          query = queries.first['query'].gsub('"', '')
 
           response = RestClient.get(
             url,
@@ -29,10 +29,17 @@ module Rglossa
               startRecord: start_record,
               maximumRecords: maximum_records }
           ) do |response, request, result|
+
+            results = []
+
+            if response.body !~ /numberOfRecords/
+              # No results
+              return results
+            end
+
             self.num_hits = response.body.match(/numberOfRecords>(\d+)/)[1]
             save!
 
-            results = []
             response.body.scan(/<(\w+:)?Resource.+?<\/\1Resource>/) do
               # Since we don't know which namespaces were used, we just remove
               # them (unfortunately, Nokogiri's remove_namespaces! method
