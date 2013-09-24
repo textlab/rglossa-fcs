@@ -37,12 +37,8 @@ module Rglossa
 
 
         def create_queries
-          query = params[:query]
-
-          # Just make it work with a single query word for now
-          unless query =~ /^".+"$/
-            query = %Q{"#{query}"}
-          end
+          # Remove any enclosing quotes and then quote each individual search term
+          query = params[:query].gsub('"', '').gsub(/\S+/, '"\0"')
 
           { queries: [{ 'query' => query, 'corpusShortName' => params[:corpusShortName] }] }
         end
