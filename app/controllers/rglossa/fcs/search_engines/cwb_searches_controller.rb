@@ -37,10 +37,31 @@ module Rglossa
 
 
         def create_queries
-          # Remove any enclosing quotes and then quote each individual search term
-          query = params[:query].gsub('"', '').gsub(/\S+/, '"\0"')
+          # Remove any enclosing quotes
+          query = params[:query].gsub('"', '')
+
+          terms = query.split.map do |term|
+            if term =~ /^prox\/unit=word\/distance(\D+)(\d+)/
+              interval_specification($1, $2.to_i)
+            else
+              '"' + term + '"'
+            end
+          end
+          query = terms.join(' ')
 
           { queries: [{ 'query' => query, 'corpusShortName' => params[:corpusShortName] }] }
+        end
+
+
+        def interval_specification(operator, num)
+          interval = case operator
+          when '<' then "{0,#{num-1}}"
+          when '<=' then "{0,#{num}}"
+          when '>' then "{#{num+1},}"
+          when '>=' then "{#{num},}"
+          when '=', '==' then "{#{num}}"
+          end
+          "[]#{interval}"
         end
 
 
