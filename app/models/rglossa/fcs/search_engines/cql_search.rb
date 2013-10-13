@@ -13,6 +13,7 @@ module Rglossa
         def run_queries
         end
 
+
         def get_result_page(page_no)
           corpus = Corpus.find_by_short_name(queries.first['corpusShortName'])
           url = corpus.config[:url]
@@ -27,36 +28,39 @@ module Rglossa
               operation: 'searchRetrieve',
               query: query,
               startRecord: start_record,
-              maximumRecords: maximum_records }
-          ) do |response, request, result|
+              maximumRecords: maximum_records
+            }
+          ) { |response, request, result| process_response(response) }
+        end
 
-            results = []
 
-            if response.body !~ /numberOfRecords/
-              # No results
-              return results
-            end
+        def process_response(response)
+          results = []
 
-            self.num_hits = response.body.match(/numberOfRecords>(\d+)/)[1]
-            save!
-
-            response.body.scan(/<(\w+:)?Resource.+?<\/\1Resource>/) do
-              # Since we don't know which namespaces were used, we just remove
-              # them (unfortunately, Nokogiri's remove_namespaces! method
-              # doesn't seem to work, but a simple regular expression should do the trick)
-              s = $&.gsub(/(<\/?)\w+:/, '\1')
-              doc = Nokogiri::XML(s)
-              results << {
-                sId:       doc.root[:pid],
-                preMatch:  doc.css('c[type="left"]').text,
-                match:     doc.css('kw').text,
-                postMatch: doc.css('c[type="right"]').text
-              }
-            end
-            results
+          if response.body !~ /numberOfRecords/
+            # No results
+            return results
           end
 
+          self.num_hits = response.body.match(/numberOfRecords>(\d+)/)[1]
+          save!
+
+          response.body.scan(/<(\w+:)?Resource.+?<\/\1Resource>/) do
+            # Since we don't know which namespaces were used, we just remove
+            # them (unfortunately, Nokogiri's remove_namespaces! method
+            # doesn't seem to work, but a simple regular expression should do the trick)
+            s = $&.gsub(/(<\/?)\w+:/, '\1')
+            doc = Nokogiri::XML(s)
+            results << {
+              sId:       doc.root[:pid],
+              preMatch:  doc.css('c[type="left"]').text,
+              match:     doc.css('kw').text,
+              postMatch: doc.css('c[type="right"]').text
+            }
           end
+          results
+        end
+
       end
     end
   end
