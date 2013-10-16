@@ -70,7 +70,6 @@ module Rglossa
             nrecords = response.body.match(/numberOfRecords>(\d+)/)[1].to_i
             self.corpus_part_counts << nrecords
             self.num_hits += nrecords
-            save!
 
             response.body.scan(/<(\w+:)?Resource.+?<\/\1Resource>/m) do
               # Since we don't know which namespaces were used, we just remove
