@@ -53,12 +53,14 @@ module Rglossa
         def send_request(url, query, start_record, maximum_records)
           RestClient.get(
             url,
-            params: {
-              version: SRUCQL_VERSION,
-              operation: 'searchRetrieve',
-              query: query,
-              startRecord: start_record,
-              maximumRecords: maximum_records
+            {
+                params: {
+                    version: SRUCQL_VERSION,
+                    operation: 'searchRetrieve',
+                    query: query,
+                    startRecord: start_record,
+                    maximumRecords: maximum_records
+                }
             }
           ) { |response, request, result| process_response(response) }
         end
