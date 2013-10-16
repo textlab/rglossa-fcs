@@ -68,7 +68,7 @@ module Rglossa
           if response.body =~ /numberOfRecords/
 
             nrecords = response.body.match(/numberOfRecords>(\d+)/)[1].to_i
-            self.corpus_part_counts << nrecords
+            self.corpus_part_counts[current_corpus_part] ||= nrecords
             self.num_hits += nrecords
 
             response.body.scan(/<(\w+:)?Resource.+?<\/\1Resource>/m) do
