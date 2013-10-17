@@ -15,7 +15,7 @@ module Rglossa
         end
 
 
-        def get_result_page(page_no)
+        def get_result_page(page_no, extra_attributes = nil)
           corpus = Corpus.find_by_short_name(queries.first['corpusShortName'])
           parts = corpus.config[:parts]
 
@@ -31,14 +31,16 @@ module Rglossa
           if parts
             # We are dealing with a multipart corpus. Iterate over the parts
             # until we have obtained page_size search results.
-            while @results.size < page_size && current_corpus_part < parts.size
-              config = parts[current_corpus_part]
-              send_request(config[:url], query, start_record, maximum_records, :build_kwic)
+            if @results.size < page_size && current_corpus_part < parts.size
+              while @results.size < page_size && current_corpus_part < parts.size
+                config = parts[current_corpus_part]
+                send_request(config[:url], query, start_record, maximum_records, :build_kwic)
 
-              self.current_corpus_part += 1
-              maximum_records = page_size - @results.size
+                self.current_corpus_part += 1
+                maximum_records = page_size - @results.size
+              end
+              self.current_corpus_part -= 1
             end
-            self.current_corpus_part -= 1
           else
             # The corpus does not contain any subparts
             send_request(corpus.config[:url], query, start_record, maximum_records, :build_kwic)

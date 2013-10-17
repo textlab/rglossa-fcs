@@ -16,6 +16,7 @@ module Rglossa
 
         def create
           @search = create_search(create_queries)
+          @search.current_corpus_part = params[:current_corpus_part].to_i
 
           # The nil parameter means we don't want any attributes beside the word form
           results = @search.get_result_page(1, nil)
