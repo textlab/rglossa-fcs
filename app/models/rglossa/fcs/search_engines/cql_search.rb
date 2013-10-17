@@ -44,7 +44,7 @@ module Rglossa
             send_request(corpus.config[:url], query, start_record, maximum_records, :build_kwic)
           end
 
-          # Make sure any subcorpus counts are saved
+          # Make sure that num_hits as well as any subcorpus counts are saved
           save!
           @results
         end
@@ -54,7 +54,9 @@ module Rglossa
           # Since response processing must be done in a block provided to RestClient.get,
           # we have to use an instance variable to communicate the result back here, although
           # it's ugly...
-          send_request(part[:url], query, 0, 1, :count_records)
+          # NOTE: There seems to be a bug in the Goethe corpus (http://clarin.ids-mannheim.de/cosmassru)
+          # which causes it to cut off numberOfRecords at the requested maximumRecords.
+          send_request(part[:url], query, 1, 1, :count_records)
           @latest_corpus_part_count
         end
 
