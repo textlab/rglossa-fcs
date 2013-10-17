@@ -26,7 +26,7 @@ module Rglossa
           # This will be populated by the call to send_request. Since that method expects response
           # processing to happen in a provided block, we need to store the results in this
           # instance variable instead of simply returning them from send_request.
-          @results ||= []
+          @results = []
 
           if parts
             # We are dealing with a multipart corpus. Iterate over the parts
