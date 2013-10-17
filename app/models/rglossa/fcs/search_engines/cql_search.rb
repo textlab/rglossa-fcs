@@ -33,7 +33,7 @@ module Rglossa
             # until we have obtained page_size search results.
             while @results.size < page_size && current_corpus_part < parts.size
               config = parts[current_corpus_part]
-              send_request(config[:url], query, start_record, maximum_records)
+              send_request(config[:url], query, start_record, maximum_records, :build_kwic)
 
               self.current_corpus_part += 1
               maximum_records = page_size - @results.size
@@ -41,7 +41,7 @@ module Rglossa
             self.current_corpus_part -= 1
           else
             # The corpus does not contain any subparts
-            send_request(corpus.config[:url], query, start_record, maximum_records)
+            send_request(corpus.config[:url], query, start_record, maximum_records, :build_kwic)
           end
 
           # Make sure any subcorpus counts are saved
@@ -50,7 +50,16 @@ module Rglossa
         end
 
 
-        def send_request(url, query, start_record, maximum_records)
+        def get_corpus_part_count(part, query)
+          # Since response processing must be done in a block provided to RestClient.get,
+          # we have to use an instance variable to communicate the result back here, although
+          # it's ugly...
+          send_request(part[:url], query, 0, 1, :count_records)
+          @latest_corpus_part_count
+        end
+
+
+        def send_request(url, query, start_record, maximum_records, response_processor)
           RestClient.get(
             url,
             {
@@ -62,11 +71,11 @@ module Rglossa
                     maximumRecords: maximum_records
                 }
             }
-          ) { |response, request, result| process_response(response) }
+          ) { |response, request, result| method(response_processor).call(response) }
         end
 
 
-        def process_response(response)
+        def build_kwic(response)
           if response.body =~ /numberOfRecords/
 
             nrecords = response.body.match(/numberOfRecords>(\d+)/)[1].to_i
@@ -87,6 +96,11 @@ module Rglossa
               }
             end
           end
+        end
+
+
+        def count_records(response)
+          @latest_corpus_part_count = response.body =~ /numberOfRecords>(\d+)/ ? $1.to_i : 0
         end
 
       end

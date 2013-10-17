@@ -13,6 +13,7 @@ Rglossa::Engine.routes.draw do
       resources :cql_searches, controller: 'remote_searches' do
         member do
           get 'results'
+          get 'count'
         end
       end
     end
