@@ -37,6 +37,7 @@ module Rglossa
                 send_request(config[:url], query, start_record, maximum_records, :build_kwic)
 
                 self.current_corpus_part += 1
+                start_record = 1
                 maximum_records = page_size - @results.size
               end
               self.current_corpus_part -= 1

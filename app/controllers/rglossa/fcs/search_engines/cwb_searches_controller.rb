@@ -18,8 +18,14 @@ module Rglossa
           @search = create_search(create_queries)
           @search.current_corpus_part = params[:current_corpus_part].to_i
 
+          page_no = if params[:startRecord].present? then
+                      params[:startRecord].to_i.div(@search.page_size) + 1
+                    else
+                      1
+                    end
+
           # The nil parameter means we don't want any attributes beside the word form
-          results = @search.get_result_page(1, nil)
+          results = @search.get_result_page(page_no, nil)
           if params[:maximumRecords].present?
             limit = params[:maximumRecords].to_i - 1
             results = results[0..limit]
