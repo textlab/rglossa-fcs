@@ -20,6 +20,16 @@ module Rglossa
           parts = corpus.config[:parts]
 
           start_record = (page_no - 1) * page_size + 1
+          if parts
+            # Subtract the number of hits that we already found in other corpus parts.
+            # So if we ask for page no. 2 (with page_size set to 15) and the first page contained
+            # 10 hits from corpus part 1 and 5 from corpus part 2, start_record will be
+            # 16 - 10 = 6 to continue searching at the right position in corpus part 2.
+            start_record -= (0...current_corpus_part).reduce(0) do|p, sum|
+              sum + corpus_part_counts[p]
+            end
+          end
+
           maximum_records = page_size
           query = queries.first['query'].gsub('"', '')
 
@@ -76,7 +86,7 @@ module Rglossa
                     maximumRecords: maximum_records
                 }
             }
-          ) { |response, request, result| method(response_processor).call(response) }
+          ) { |response, request, result| puts request.url; method(response_processor).call(response) }
         end
 
 
