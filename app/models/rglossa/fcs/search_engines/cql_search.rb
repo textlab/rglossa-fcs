@@ -16,8 +16,8 @@ module Rglossa
 
 
         def get_result_page(page_no, extra_attributes = nil)
-          corpus = Corpus.find_by_short_name(queries.first['corpusShortName'])
-          parts = corpus.config[:parts]
+          @corpus = Corpus.find_by_short_name(queries.first['corpusShortName'])
+          parts = @corpus.config[:parts]
 
           start_record = (page_no - 1) * page_size + 1
           if parts
@@ -54,7 +54,7 @@ module Rglossa
             end
           else
             # The corpus does not contain any subparts
-            send_request(corpus.config[:url], query, start_record, maximum_records, :build_kwic)
+            send_request(@corpus.config[:url], query, start_record, maximum_records, :build_kwic)
           end
 
           # Make sure that num_hits as well as any subcorpus counts are saved
@@ -97,6 +97,8 @@ module Rglossa
             self.corpus_part_counts[current_corpus_part] ||= nrecords
             self.num_hits += nrecords
 
+            corpus_part = @corpus.parts ? @corpus.parts[current_corpus_part][:short_name] : nil
+
             response.body.scan(/<(\w+:)?Resource.+?<\/\1Resource>/m) do
               # Since we don't know which namespaces were used, we just remove
               # them (unfortunately, Nokogiri's remove_namespaces! method
@@ -104,10 +106,11 @@ module Rglossa
               s = $&.gsub(/(<\/?)\w+:/, '\1')
               doc = Nokogiri::XML(s)
               @results << {
-                sId:       doc.root[:pid],
-                preMatch:  doc.css('c[type="left"]').text,
-                match:     doc.css('kw').text,
-                postMatch: doc.css('c[type="right"]').text
+                corpusPart: corpus_part,
+                sId:        doc.root[:pid],
+                preMatch:   doc.css('c[type="left"]').text,
+                match:      doc.css('kw').text,
+                postMatch:  doc.css('c[type="right"]').text
               }
             end
           end
