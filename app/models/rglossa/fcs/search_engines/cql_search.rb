@@ -25,7 +25,7 @@ module Rglossa
             # So if we ask for page no. 2 (with page_size set to 15) and the first page contained
             # 10 hits from corpus part 1 and 5 from corpus part 2, start_record will be
             # 16 - 10 = 6 to continue searching at the right position in corpus part 2.
-            start_record -= (0...current_corpus_part).reduce(0) do|p, sum|
+            start_record -= (0...current_corpus_part).reduce(0) do|sum, p|
               sum + corpus_part_counts[p]
             end
           end
