@@ -26,6 +26,7 @@ module Rglossa
             # 10 hits from corpus part 1 and 5 from corpus part 2, start_record will be
             # 16 - 10 = 6 to continue searching at the right position in corpus part 2.
             start_record -= (0...current_corpus_part).reduce(0) do|sum, p|
+              self.corpus_part_counts[p] ||= 0
               sum + corpus_part_counts[p]
             end
           end
