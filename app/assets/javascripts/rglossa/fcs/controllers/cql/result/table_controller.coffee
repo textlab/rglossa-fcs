@@ -13,7 +13,7 @@ App.CqlResultTableController = Em.Controller.extend
     resultPage = @get('resultPage')
 
     if resultPage
-      resultPage
+      (result.text for result in resultPage)
     else
       []
   ).property('resultPage.@each')
