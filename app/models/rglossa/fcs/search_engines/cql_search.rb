@@ -15,8 +15,8 @@ module Rglossa
         end
 
 
-        def get_result_page(page_no, extra_attributes = nil)
-          @corpus = Corpus.find_by_short_name(queries.first['corpusShortName'])
+        def get_result_page(page_no, options = {})
+          @corpus = Corpus.find_by_short_name(corpus_short_name.downcase)
           parts = @corpus.config[:parts]
 
           start_record = (page_no - 1) * page_size + 1

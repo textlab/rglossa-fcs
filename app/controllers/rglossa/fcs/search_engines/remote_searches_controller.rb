@@ -8,6 +8,11 @@ module Rglossa
           CqlSearch
         end
 
+        # The name of the search model as it occurs in query parameters, e.g.
+        def model_param
+          'remote_search'
+        end
+
       end
     end
   end

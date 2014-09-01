@@ -6,8 +6,6 @@
 //
 // WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
 // GO AFTER THE REQUIRES BELOW.
-//= require_tree ./data
-//= require_tree ./models
-//= require_tree ./controllers
+//= require rglossa/bundle
+//= require jquery
 //= require_tree ./components
-//= require_tree ../templates

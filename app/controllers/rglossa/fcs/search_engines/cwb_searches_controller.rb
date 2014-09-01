@@ -24,8 +24,7 @@ module Rglossa
                       1
                     end
 
-          # The nil parameter means we don't want any attributes beside the word form
-          results = @search.get_result_page(page_no, nil)
+          results = @search.get_result_page(page_no)
           if params[:maximumRecords].present?
             limit = params[:maximumRecords].to_i - 1
             results = results[0..limit]
