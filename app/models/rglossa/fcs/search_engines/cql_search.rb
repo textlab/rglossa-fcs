@@ -63,6 +63,9 @@ module Rglossa
           @results
         end
 
+        def count
+          num_hits
+        end
 
         def get_corpus_part_count(part, query)
           # Since response processing must be done in a block provided to RestClient.get,
