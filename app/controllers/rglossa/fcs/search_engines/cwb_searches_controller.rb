@@ -74,7 +74,7 @@ module Rglossa
         def extract_data_from(results)
           results.map do |result|
             s_id, left, keyword, right =
-                result.match(/<s_id(.*?)>:(.*?){{(.+?)}}(.*)/)[1..-1].map { |s| s.strip }
+                result.match(/<s_id(.*?)>(.*?){{(.+?)}}(.*)/)[1..-1].map { |s| s.strip }
             {s_id: s_id, left: left, keyword: keyword, right: right}
           end
         end
