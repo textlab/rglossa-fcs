@@ -50,7 +50,7 @@ module Rglossa
             if term =~ /^prox\/unit=word\/distance(\D+)(\d+)/
               interval_specification($1, $2.to_i)
             else
-              '"' + term + '"'
+              %Q{[word="#{term}" %c]}
             end
           end
           query = terms.join(' ')
