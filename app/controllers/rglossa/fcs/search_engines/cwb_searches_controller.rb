@@ -55,7 +55,7 @@ module Rglossa
           end
           query = terms.join(' ')
 
-          { queries: [{ 'query' => query, 'corpusShortName' => params[:corpusShortName] }] }
+          { queries: [{lang: 'single', query: query}], corpus_short_name: params[:corpusShortName]  }
         end
 
 
