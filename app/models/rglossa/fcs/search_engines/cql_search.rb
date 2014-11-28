@@ -32,7 +32,7 @@ module Rglossa
           end
 
           maximum_records = page_size
-          query = queries.first['query'].gsub('"', '')
+          query = queries.first['query'].match(/word="(.*?)"/)[1]
 
           # This will be populated by the call to send_request. Since that method expects response
           # processing to happen in a provided block, we need to store the results in this
