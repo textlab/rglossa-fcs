@@ -1,4 +1,5 @@
-Rglossa::Engine.routes.draw do
+Glossa2::Application.routes.draw do
+scope module: 'rglossa' do
   namespace :fcs do
     # SRU queries may use either GET or POST
     # E.g. http://localhost:3000/fcs/cwb/bokmal?version=1.2&operation=searchRetrieve&query=han&maximumRecords=1
@@ -18,4 +19,5 @@ Rglossa::Engine.routes.draw do
       end
     end
   end
+end
 end
